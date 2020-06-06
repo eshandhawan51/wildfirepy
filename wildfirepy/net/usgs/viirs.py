@@ -127,7 +127,8 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
         self.base_url += "VIIRS/" f'{self.product}.001/'
         self.regex_traverser = VIIRSHtmlParser(product=product)
         self.converter = SinusoidalCoordinate()
-   def get_h5(self, *, year, month, date, hours, minutes, latitude, longitude  **kwargs):
+
+   def get_h5(self, *, year, month, date, latitude, longitude  **kwargs):
         """
         Downloads the `h5` file and stores it on the disk.
 
@@ -139,10 +140,10 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
             Month of the observation.
         date: `int`
             Date of observation.
-        hours: `int`
-            Hour of observation. UTC time.
-        minutes: `int`
-            Minute of observation. UTC time.
+        latitude: `float`
+            latitude of the observation.
+        longitude: `float`
+            longitude of the observation.
         kwargs: `dict`
             keyword arguments to be passed to `AbstractUSGSDownloader.fetch`
 
@@ -152,7 +153,6 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
             Absolute path to the downloaded `h5` file.
         """
         date, julian_day = self._get_date(year=year, month=month, date=date)
-        time = self._get_nearest_time(hours=hours, minutes=minutes)
         h, v = self.converter(latitude, longitude)
 
         self.regex_traverser(self.base_url + date)
@@ -162,7 +162,7 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
         url = self.base_url + date + '/' + filename
         return self.fetch(url=url, filename=filename, **kwargs)
 
-    def get_xml(self, *, year, month, date, hours, minutes, **kwargs):
+    def get_xml(self, *, year, month, date, latitude, longitude, **kwargs):
         """
         Downloads the `xml` file and stores it on the disk.
 
@@ -174,10 +174,11 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
             Month of the observation.
         date: `int`
             Date of observation.
-        hours: `int`
-            Hour of observation. UTC time.
-        minutes: `int`
-            Minute of observation. UTC time.
+        latitude: `float`
+            latitude of the observation.
+        longitude: `float`
+            longitude of the observation.
+        
         kwargs: `dict`
             keyword arguments to be passed to `AbstractUSGSDownloader.fetch`
 
@@ -187,7 +188,7 @@ class Viirs_ext(AbstractUSGSDownloader, Viirs)
             Absolute path to the downloaded `xml` file.
         """
         date, julian_day = self._get_date(year=year, month=month, date=date)
-        time = self._get_nearest_time(hours=hours, minutes=minutes)
+        h, v = self.converter(latitude, longitude)
 
         filename = f"{self.product}.A{year}{'%03d' % julian_day}.{h}.001.{v}"
         filename = self.regex_traverser.get_filename(filename) + '.xml'
