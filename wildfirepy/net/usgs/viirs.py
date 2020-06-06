@@ -1,5 +1,6 @@
 from wildfirepy.net.usgs.usgs_downloader import AbstractUSGSDownloader
 from wildfirepy.net.util.usgs import VIIRSHtmlParser
+from wildfirepy.coordinates.util import SinusoidalCoordinate
 import datetime
 
 __all__ = ['VIIRSBurntAreaDownloader']
@@ -16,6 +17,7 @@ class Viirs(AbstractUSGSDownloader):
         self.product = product
         self.base_url += "VIIRS/" f'{self.product}.001/'
         self.regex_traverser = VIIRSHtmlParser(product=product)
+	
 
     def _get_nearest_time(self, hours, minutes):
 
@@ -112,6 +114,94 @@ class Viirs(AbstractUSGSDownloader):
         url = self.base_url + date + '/' + filename
         return self.fetch(url=url, filename=filename, **kwargs)
 
+
+class Viirs_ext(AbstractUSGSDownloader, Viirs)
+     """
+    Description
+    -----------
+    An Abstract Base Class Downloader for VIIRS products.
+    """
+   def __init__(self, product=''):
+        super().__init__()
+        self.product = product
+        self.base_url += "VIIRS/" f'{self.product}.001/'
+        self.regex_traverser = VIIRSHtmlParser(product=product)
+        self.converter = SinusoidalCoordinate()
+   def get_h5(self, *, year, month, date, hours, minutes, latitude, longitude  **kwargs):
+        """
+        Downloads the `h5` file and stores it on the disk.
+
+        Parameters
+        ----------
+        year: `int`
+            Year of the observation.
+        month: `int`
+            Month of the observation.
+        date: `int`
+            Date of observation.
+        hours: `int`
+            Hour of observation. UTC time.
+        minutes: `int`
+            Minute of observation. UTC time.
+        kwargs: `dict`
+            keyword arguments to be passed to `AbstractUSGSDownloader.fetch`
+
+        Returns
+        -------
+        path: `str`
+            Absolute path to the downloaded `h5` file.
+        """
+        date, julian_day = self._get_date(year=year, month=month, date=date)
+        time = self._get_nearest_time(hours=hours, minutes=minutes)
+        h, v = self.converter(latitude, longitude)
+
+        self.regex_traverser(self.base_url + date)
+
+        filename = f"{self.product}.A{year}{'%03d' % julian_day}.{h}.001.{v}"
+        filename = self.regex_traverser.get_filename(filename)
+        url = self.base_url + date + '/' + filename
+        return self.fetch(url=url, filename=filename, **kwargs)
+
+    def get_xml(self, *, year, month, date, hours, minutes, **kwargs):
+        """
+        Downloads the `xml` file and stores it on the disk.
+
+        Parameters
+        ----------
+        year: `int`
+            Year of the observation.
+        month: `int`
+            Month of the observation.
+        date: `int`
+            Date of observation.
+        hours: `int`
+            Hour of observation. UTC time.
+        minutes: `int`
+            Minute of observation. UTC time.
+        kwargs: `dict`
+            keyword arguments to be passed to `AbstractUSGSDownloader.fetch`
+
+        Returns
+        -------
+        path: `str`
+            Absolute path to the downloaded `xml` file.
+        """
+        date, julian_day = self._get_date(year=year, month=month, date=date)
+        time = self._get_nearest_time(hours=hours, minutes=minutes)
+
+        filename = f"{self.product}.A{year}{'%03d' % julian_day}.{h}.001.{v}"
+        filename = self.regex_traverser.get_filename(filename) + '.xml'
+        url = self.base_url + date + '/' + filename
+        return self.fetch(url=url, filename=filename, **kwargs)
+
+class VIIRSFireAreaDownloader(Viirs_ext):
+    """
+    Description
+    -----------
+    VIIRS Class for ``, i.e., Fire Area Data.
+    """
+    def __init__(self):
+        super().__init__(product="VNP14A1")
 
 class VIIRSBurntAreaDownloader(Viirs):
     """
