@@ -17,7 +17,6 @@ class Viirs(AbstractUSGSDownloader):
         self.product = product
         self.base_url += "VIIRS/" f'{self.product}.001/'
         self.regex_traverser = VIIRSHtmlParser(product=product)
-	
 
     def _get_nearest_time(self, hours, minutes):
 
@@ -115,20 +114,20 @@ class Viirs(AbstractUSGSDownloader):
         return self.fetch(url=url, filename=filename, **kwargs)
 
 
-class Viirs_ext(AbstractUSGSDownloader, Viirs)
-     """
+class Viirs_ext(Viirs)
+    """
     Description
     -----------
     An Abstract Base Class Downloader for VIIRS products.
     """
-   def __init__(self, product=''):
+    def __init__(self, product=''):
         super().__init__()
         self.product = product
         self.base_url += "VIIRS/" f'{self.product}.001/'
         self.regex_traverser = VIIRSHtmlParser(product=product)
         self.converter = SinusoidalCoordinate()
 
-   def get_h5(self, *, year, month, date, latitude, longitude  **kwargs):
+    def get_h5(self, *, year, month, date, latitude, longitude  **kwargs):
         """
         Downloads the `h5` file and stores it on the disk.
 
