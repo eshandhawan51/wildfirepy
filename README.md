@@ -1,8 +1,9 @@
 WildfirePy
 =====
 
-![](https://github.com/wildfirepy/wildfirepy/workflows/Python%20application/badge.svg)
-![](https://github.com/wildfirepy/wildfirepy/workflows/Python%20package/badge.svg)
+![Python application](https://github.com/wildfirepy/wildfirepy/workflows/Python%20application/badge.svg)
+![Python Online Tests](https://github.com/wildfirepy/wildfirepy/workflows/Python%20Online%20Tests/badge.svg)
+![Codestyle](https://github.com/wildfirepy/wildfirepy/workflows/Codestyle/badge.svg)
 
 WildfirePy is an open-source Python library for Wildfire GIS data analysis.
 
@@ -20,7 +21,7 @@ For now the easiest thing is to install it locally by running,
 pip install -e .
 ```
 from the directory you just
-downloaded. 
+downloaded.
 
 Usage
 -----
@@ -47,5 +48,6 @@ Contributing
 ------------
 
 If you would like to get involved, start by joining the IRC chat room named `#wildfirepy` on [Riot](https://riot.im/app/#/room/!jWUOIxirCHymPQkpXb:matrix.org).
+You may follow our [LinkedIn](https://www.linkedin.com/company/wildfirepy/) and [Twitter](https://twitter.com/wildfirepy) handle as well!
 
 Help is always welcome so let us know what you like to work on, or check out the [issues page](https://github.com/wildfirepy/wildfirepy/issues) for a list of some known outstanding items.
